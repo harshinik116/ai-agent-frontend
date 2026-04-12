@@ -5,6 +5,18 @@ import { useState } from "react";
 export default function Home() {
   const [message, setMessage] = useState("");
   const [chat, setChat] = useState<any[]>([]);
+  const [password, setPassword] = useState("");
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  const CORRECT_PASSWORD = "Saturday6!"; // 👉 change this
+
+  const handleLogin = () => {
+    if (password === CORRECT_PASSWORD) {
+      setIsAuthenticated(true);
+    } else {
+      alert("Wrong password ❌");
+    }
+  };
 
   const sendMessage = async () => {
     if (!message) return;
@@ -36,6 +48,23 @@ export default function Home() {
     }
   };
 
+  // 🔐 LOGIN SCREEN
+  if (!isAuthenticated) {
+    return (
+      <div style={{ padding: 50 }}>
+        <h2>Enter Password 🔐</h2>
+        <input
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="Enter password"
+        />
+        <button onClick={handleLogin}>Submit</button>
+      </div>
+    );
+  }
+
+  // 🤖 CHAT UI
   return (
     <div style={{ padding: 20 }}>
       <h1>Harshini AI 🤖</h1>
