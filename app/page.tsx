@@ -87,3 +87,25 @@ export default function Home() {
     </div>
   );
 }
+<input
+  type="file"
+  onChange={async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const res = await fetch("https://ai-agent-backend-q97u.onrender.com/analyze-image", {
+      method: "POST",
+      body: formData,
+    });
+
+    const data = await res.json();
+
+    setChat((prev) => [
+      ...prev,
+      { role: "assistant", content: data.reply },
+    ]);
+  }}
+/>
