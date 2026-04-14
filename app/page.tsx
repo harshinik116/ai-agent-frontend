@@ -8,7 +8,7 @@ export default function Home() {
   const [password, setPassword] = useState("");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  const CORRECT_PASSWORD = "Saturday6!"; // 👉 change this
+  const CORRECT_PASSWORD = "family2026";
 
   const handleLogin = () => {
     if (password === CORRECT_PASSWORD) {
@@ -25,8 +25,9 @@ export default function Home() {
     setChat(newChat);
     setMessage("");
 
-    try {
-      const res = await fetch("https://ai-agent-backend-q97u.onrender.com/chat", {
+    const res = await fetch(
+      "https://ai-agent-backend-q97u.onrender.com/chat",
+      {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -35,17 +36,39 @@ export default function Home() {
           message: message,
           history: newChat,
         }),
-      });
+      }
+    );
 
-      const data = await res.json();
+    const data = await res.json();
 
-      setChat([
-        ...newChat,
-        { role: "assistant", content: data.reply },
-      ]);
-    } catch (error) {
-      console.error(error);
-    }
+    setChat([
+      ...newChat,
+      { role: "assistant", content: data.reply },
+    ]);
+  };
+
+  // ✅ IMAGE UPLOAD HANDLER (INSIDE COMPONENT)
+  const handleImageUpload = async (e: any) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const res = await fetch(
+      "https://ai-agent-backend-q97u.onrender.com/analyze-image",
+      {
+        method: "POST",
+        body: formData,
+      }
+    );
+
+    const data = await res.json();
+
+    setChat((prev) => [
+      ...prev,
+      { role: "assistant", content: data.reply },
+    ]);
   };
 
   // 🔐 LOGIN SCREEN
@@ -57,7 +80,6 @@ export default function Home() {
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          placeholder="Enter password"
         />
         <button onClick={handleLogin}>Submit</button>
       </div>
@@ -84,28 +106,11 @@ export default function Home() {
       />
 
       <button onClick={sendMessage}>Send</button>
+
+      {/* ✅ IMAGE UPLOAD */}
+      <div style={{ marginTop: 20 }}>
+        <input type="file" onChange={handleImageUpload} />
+      </div>
     </div>
   );
 }
-<input
-  type="file"
-  onChange={async (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    const formData = new FormData();
-    formData.append("file", file);
-
-    const res = await fetch("https://ai-agent-backend-q97u.onrender.com/analyze-image", {
-      method: "POST",
-      body: formData,
-    });
-
-    const data = await res.json();
-
-    setChat((prev) => [
-      ...prev,
-      { role: "assistant", content: data.reply },
-    ]);
-  }}
-/>
